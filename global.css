@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Optional custom variables for Expo Web */
+:root {
+  --font-size-base: 14px;
+}
