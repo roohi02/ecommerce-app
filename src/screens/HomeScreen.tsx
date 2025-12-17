@@ -1,5 +1,5 @@
 // src/screens/HomeScreen.tsx
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
+import { useCartStore } from "../store/useCartStore";
 import { useRouter } from "expo-router";
 
 const { width } = Dimensions.get("window");
@@ -23,20 +24,15 @@ const products = Array.from({ length: 20 }).map((_, i) => ({
 
 export default function HomeScreen() {
   const router = useRouter();
-  const [cart, setCart] = useState<Record<number, number>>({});
+  
 
-  const addToCart = (id: number) => {
-    setCart((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
-  };
-
-  const removeFromCart = (id: number) => {
-    setCart((prev) => ({
-      ...prev,
-      [id]: Math.max((prev[id] || 0) - 1, 0),
-    }));
-  };
-
-  const totalItems = Object.values(cart).reduce((a, b) => a + b, 0);
+  const cart = useCartStore((state) => state.cart);
+const addToCart = useCartStore((state) => state.addToCart);
+const removeFromCart = useCartStore((state) => state.removeFromCart);
+const totalItems = useCartStore((state) =>
+  Object.values(state.cart).reduce((a, b) => a + b, 0)
+);
+ 
 
   const renderItem = ({ item }: { item: (typeof products)[0] }) => {
     const quantity = cart[item.id] || 0;
