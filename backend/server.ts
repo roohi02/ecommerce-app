@@ -7,19 +7,27 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const stripe = new Stripe("sk_test_51SfNx3KE1mis6wdMVLJ2ppqLgurE5PpN5csaeo3R4FWz5ZNQWO5qX1KBk9EMWef1hN0Ffrm8UN8MxT1YwviXD0gI00B22gtsx8");
+const stripe = new Stripe("");
 
 app.post("/create-payment-intent", async (req, res) => {
   const { items } = req.body;
 
-  const amount = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  try {
+    let amount = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: amount * 100,
-    currency: "usd",
-  });
+    // Ensure minimum amount in cents
+    if (amount < 0.5) amount = 0.5; // $0.50 minimum
 
-  res.json({ clientSecret: paymentIntent.client_secret });
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(amount * 100), // convert to cents
+      currency: "usd",
+    });
+
+    res.json({ clientSecret: paymentIntent.client_secret });
+  } catch (err) {
+    console.error("Error creating PaymentIntent:", err);
+    res.status(500).json({ error: "PaymentIntent creation failed" });
+  }
 });
 
 app.listen(4242, () => console.log("Backend running on 4242"));

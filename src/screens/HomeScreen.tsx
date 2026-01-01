@@ -1,4 +1,3 @@
-// src/screens/HomeScreen.tsx
 import React from "react";
 import {
   View,
@@ -14,7 +13,7 @@ import { useRouter } from "expo-router";
 const { width } = Dimensions.get("window");
 const ITEM_WIDTH = width / 2 - 16;
 
-// 20 products → 2 per row × 10 rows
+// Product catalog (source of truth)
 const products = Array.from({ length: 20 }).map((_, i) => ({
   id: i + 1,
   name: `Product ${i + 1}`,
@@ -24,18 +23,18 @@ const products = Array.from({ length: 20 }).map((_, i) => ({
 
 export default function HomeScreen() {
   const router = useRouter();
-  
 
   const cart = useCartStore((state) => state.cart);
-const addToCart = useCartStore((state) => state.addToCart);
-const removeFromCart = useCartStore((state) => state.removeFromCart);
-const totalItems = useCartStore((state) =>
-  Object.values(state.cart).reduce((a, b) => a + b, 0)
-);
- 
+  const addToCart = useCartStore((state) => state.addToCart);
+  const removeFromCart = useCartStore((state) => state.removeFromCart);
+
+  const totalItems = Object.values(cart).reduce(
+    (sum, item) => sum + item.quantity,
+    0
+  );
 
   const renderItem = ({ item }: { item: (typeof products)[0] }) => {
-    const quantity = cart[item.id] || 0;
+    const quantity = cart[item.id]?.quantity ?? 0;
 
     return (
       <View
@@ -62,7 +61,14 @@ const totalItems = useCartStore((state) =>
           <Text className="text-lg font-bold">{quantity}</Text>
 
           <TouchableOpacity
-            onPress={() => addToCart(item.id)}
+            onPress={() =>
+              addToCart({
+                id: item.id,
+                name: item.name,
+                price: item.price,
+                image: item.image,
+              })
+            }
             className="bg-green-500 px-3 py-1 rounded"
           >
             <Text className="text-white text-lg">+</Text>
@@ -74,9 +80,10 @@ const totalItems = useCartStore((state) =>
 
   return (
     <View className="flex-1 bg-gray-100">
-      <Text className="text-5xl font-bold text-center mt-4 mb-2">
+      <Text className="text-4xl font-bold text-center mt-4 mb-2">
         Grocery Selection
       </Text>
+
       <FlatList
         data={products}
         keyExtractor={(item) => item.id.toString()}
