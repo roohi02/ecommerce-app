@@ -6,7 +6,7 @@ import "../global.css";
 export default function Layout() {
   return (
     <StripeProvider
-      publishableKey="pk_test_51SfNx3KE1mis6wdMbz8ES7QrVNIGPQv6L4halLEyZgxSV5anfrP0KhaLWuCTEFw1jJU8o9I7s5WXc4tx21Guo1M900bEZm8xCI" // your test key
+      publishableKey="" // your test key
       merchantIdentifier="merchant.com.yourapp" // iOS only
     >
       <Tabs screenOptions={{ headerShown: false }}>
