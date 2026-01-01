@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@stripe/stripe-react-native": "^0.57.2",
     "expo": "~54.0.29",
     "expo-router": "~6.0.19",
     "expo-status-bar": "~3.0.9",

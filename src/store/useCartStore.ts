@@ -1,34 +1,52 @@
 import { create } from "zustand";
 
+export type CartItem = {
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+  quantity: number;
+};
+
 type CartState = {
-  cart: Record<number, number>;
-  addToCart: (id: number) => void;
+  cart: Record<number, CartItem>;
+  addToCart: (product: Omit<CartItem, "quantity">) => void;
   removeFromCart: (id: number) => void;
   clearCart: () => void;
-  totalItems: () => number;
 };
 
 export const useCartStore = create<CartState>((set, get) => ({
   cart: {},
 
-  addToCart: (id) =>
-    set((state) => ({
-      cart: {
-        ...state.cart,
-        [id]: (state.cart[id] || 0) + 1,
-      },
-    })),
+  addToCart: (product) =>
+    set((state) => {
+      const existing = state.cart[product.id];
+
+      return {
+        cart: {
+          ...state.cart,
+          [product.id]: {
+            ...product,
+            quantity: existing ? existing.quantity + 1 : 1,
+          },
+        },
+      };
+    }),
 
   removeFromCart: (id) =>
-    set((state) => ({
-      cart: {
-        ...state.cart,
-        [id]: Math.max((state.cart[id] || 0) - 1, 0),
-      },
-    })),
+    set((state) => {
+      const updated = { ...state.cart };
+
+      if (!updated[id]) return state;
+
+      if (updated[id].quantity === 1) {
+        delete updated[id];
+      } else {
+        updated[id].quantity -= 1;
+      }
+
+      return { cart: updated };
+    }),
 
   clearCart: () => set({ cart: {} }),
-
-  totalItems: () =>
-    Object.values(get().cart).reduce((a, b) => a + b, 0),
 }));

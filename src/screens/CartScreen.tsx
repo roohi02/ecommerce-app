@@ -1,15 +1,7 @@
-// src/screens/CartScreen.tsx
 import React from "react";
-import { View, Text, Button, FlatList, Image } from "react-native";
+import { View, Text, FlatList, Image, Button } from "react-native";
 import { useRouter } from "expo-router";
 import { useCartStore } from "../store/useCartStore";
-
-const products = Array.from({ length: 20 }).map((_, i) => ({
-  id: i + 1,
-  name: `Product ${i + 1}`,
-  price: (i + 1) * 10,
-  image: `https://picsum.photos/100?random=${i + 1}`, // small thumbnail
-}));
 
 export default function CartScreen() {
   const router = useRouter();
@@ -19,19 +11,7 @@ export default function CartScreen() {
   const removeFromCart = useCartStore((state) => state.removeFromCart);
   const clearCart = useCartStore((state) => state.clearCart);
 
-  // Get cart items with product details
-  const cartItems = Object.entries(cart)
-    .filter(([_, quantity]) => quantity > 0)
-    .map(([id, quantity]) => {
-      const product = products.find((p) => p.id === Number(id));
-      return {
-        id: Number(id),
-        name: product?.name ?? "Unknown Product",
-        price: product?.price ?? 0,
-        quantity,
-        image: product?.image ?? "",
-      };
-    });
+  const cartItems = Object.values(cart);
 
   const totalPrice = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -53,20 +33,30 @@ export default function CartScreen() {
           data={cartItems}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
-            <View className="p-4 mb-4 bg-gray-100 rounded-lg shadow-md flex-row items-center">
+            <View className="flex-row items-center bg-gray-100 p-4 mb-4 rounded-lg">
               <Image
                 source={{ uri: item.image }}
                 style={{ width: 60, height: 60, borderRadius: 8, marginRight: 12 }}
               />
 
               <View className="flex-1">
-                <Text className="text-xl font-semibold">{item.name}</Text>
+                <Text className="text-lg font-semibold">{item.name}</Text>
                 <Text>Quantity: {item.quantity}</Text>
-                <Text>Price: ${item.price * item.quantity}</Text>
+                <Text>${item.price * item.quantity}</Text>
 
                 <View className="flex-row mt-2 space-x-2">
                   <Button title="−" onPress={() => removeFromCart(item.id)} />
-                  <Button title="+" onPress={() => addToCart(item.id)} />
+                  <Button
+                    title="+"
+                    onPress={() =>
+                      addToCart({
+                        id: item.id,
+                        name: item.name,
+                        price: item.price,
+                        image: item.image,
+                      })
+                    }
+                  />
                 </View>
               </View>
             </View>
@@ -75,14 +65,26 @@ export default function CartScreen() {
       )}
 
       {cartItems.length > 0 && (
-        <Text className="text-xl font-bold text-right mb-4">
-          Total: ${totalPrice}
-        </Text>
+        <>
+          <Text className="text-xl font-bold text-right mb-4">
+            Total: ${totalPrice}
+          </Text>
+
+          <Button
+            title="Go to Checkout"
+            onPress={() => router.push("/checkout")}
+          />
+        </>
       )}
 
-      <Button title="Back to Home" onPress={() => router.push("/home")} />
+      <View className="mt-3">
+        <Button title="Back to Home" onPress={() => router.push("/home")} />
+      </View>
+
       {cartItems.length > 0 && (
-        <Button title="Clear Cart" onPress={clearCart} color="red" />
+        <View className="mt-2">
+          <Button title="Clear Cart" onPress={clearCart} color="red" />
+        </View>
       )}
     </View>
   );
