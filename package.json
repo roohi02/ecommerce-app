@@ -6,17 +6,17 @@
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "test": "jest"
   },
   "dependencies": {
     "@stripe/stripe-react-native": "0.50.3",
     "expo": "~54.0.30",
+    "expo-dev-client": "~6.0.20",
     "expo-router": "~6.0.21",
     "expo-status-bar": "~3.0.9",
     "nativewind": "^4.2.1",
     "prettier-plugin-tailwindcss": "^0.5.14",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
     "react-native": "0.81.5",
     "react-native-css-interop": "^0.2.1",
     "react-native-reanimated": "~4.1.1",
@@ -26,9 +26,13 @@
     "zustand": "^5.0.9"
   },
   "devDependencies": {
+    "@testing-library/jest-native": "^5.4.3",
+    "@testing-library/react-native": "^13.3.3",
+    "@types/jest": "^30.0.0",
     "@types/react": "~19.1.0",
     "@types/react-native": "^0.72.8",
     "babel-preset-expo": "^54.0.8",
+    "jest-expo": "^54.0.16",
     "ts-node": "^10.9.2",
     "typescript": "~5.9.2"
   },

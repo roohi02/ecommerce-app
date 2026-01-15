@@ -37,6 +37,12 @@
           "merchantIdentifier": "merchant.com.anonymous.ecommerceapp"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "b33d5a12-22a5-4625-aa19-758e1e5c9316"
+      }
+    }
   }
 }
